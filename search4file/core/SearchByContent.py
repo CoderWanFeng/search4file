@@ -13,9 +13,10 @@ class SearchByContent():
                 _path = glob.os.path.join(file_path, '*')
                 self.search_files(_path, content)
             else:
-
-                self.search_txt_file(file_path, content)
-                self.search_word_file(file_path, content)
+                if file_path.endswith("docx"):
+                    self.search_word_file(file_path, content)
+                else:
+                    self.search_txt_file(file_path, content)
 
     def search_txt_file(self, search_path, content) -> None:
         """
@@ -34,14 +35,13 @@ class SearchByContent():
 
     def search_word_file(self, search_path, content):
         targetDocx = []
-        if search_path.endswith("docx"):
-            document = Document(search_path)
-            all_paragraphs = document.paragraphs
-            for paragraph in all_paragraphs:
-                if paragraph.text.find(content) >= 0:
-                    targetDocx.append(search_path)
-        targetDocx = []
+
+        document = Document(search_path)
+        all_paragraphs = document.paragraphs
+        for paragraph in all_paragraphs:
+            if paragraph.text.find(content) >= 0:
+                targetDocx.append(search_path)
         if targetDocx:
-            print(f'没有包含此内容的word文档')
+            print(targetDocx)
         else:
             print(f'没有包含内容：{content}的word文档')
