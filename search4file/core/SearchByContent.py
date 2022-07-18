@@ -13,7 +13,7 @@ class SearchByContent():
                 _path = glob.os.path.join(file_path, '*')
                 self.search_files(_path, content)
             else:
-                
+
                 self.search_txt_file(file_path, content)
                 self.search_word_file(file_path, content)
 
@@ -33,21 +33,15 @@ class SearchByContent():
             pass
 
     def search_word_file(self, search_path, content):
-        path = Path(search_path)
         targetDocx = []
-        print('*' * 20 + "{}".format(path) + '*' * 20)
-        # 存储包含查找内容的文件名
-        file_path_dict = {}
-        for root, dirs, files in os.walk(search_path):
-            for file in files:
-                if file.endswith("docx"):
-                    file_path_dict[file] = (path / file)
-        # 从Excel抄来的，合并路径用
-        for filename, filepath in file_path_dict.items():
-            document = Document(filepath)
+        if search_path.endswith("docx"):
+            document = Document(search_path)
             all_paragraphs = document.paragraphs
             for paragraph in all_paragraphs:
                 if paragraph.text.find(content) >= 0:
-                    targetDocx.append(filename)
-        print(targetDocx)
-        pass
+                    targetDocx.append(search_path)
+        targetDocx = []
+        if targetDocx:
+            print(f'没有包含此内容的word文档')
+        else:
+            print(f'没有包含内容：{content}的word文档')
