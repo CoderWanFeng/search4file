@@ -40,7 +40,5 @@ class SearchByContent():
         all_paragraphs = document.paragraphs
         for paragraph in all_paragraphs:
             if paragraph.text.find(content) >= 0:
-                targetDocx.append(search_path)
-        if targetDocx:
-            print('该文件内，包含：【{}】'.format(content) + ' | ' * 2 + search_path)
+                print(f'该文件内，包含：【{content}】 | | {search_path}')
 
