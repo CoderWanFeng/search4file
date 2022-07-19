@@ -1,7 +1,7 @@
 import unittest
 
 from search4file import __version__
-from search4file.api.search4file import search_by_content
+from search4file.api.search_by_content import search_by_content
 
 
 class TestSearch(unittest.TestCase):

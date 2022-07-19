@@ -3,10 +3,10 @@ import json
 import os
 
 from docx import Document
-from pathlib import Path
 
 
 class SearchByContent():
+    # 初始化输出结果
     def __init__(self):
         self.search_result_dict = {
             'search_path': None,
@@ -19,6 +19,7 @@ class SearchByContent():
         self.excel_result_dict = {}
         self.ppt_result_dict = {}
 
+    # 格式化返回内容
     def create_return_result(self, search_path, search_content):
         search_path = os.path.abspath(search_path)
         self.search_result_dict['search_path'] = search_path
@@ -29,6 +30,7 @@ class SearchByContent():
             self.search_result_dict['search_result']['word'] = self.word_result_dict
         return json.dumps(self.search_result_dict, indent=4, ensure_ascii=False)
 
+    # 搜索内容的逻辑
     def search_files(self, search_path, search_content):
         glob_path = glob.glob(search_path)
         for file_path in glob_path:  # for 循环判断递归查到的内容是文件夹还是文件
@@ -45,6 +47,7 @@ class SearchByContent():
 
         return self.create_return_result(search_path, search_content)
 
+    # 搜索纯文本文件
     def search_txt_file(self, file_path, search_content) -> None:
         """
         :param search_path:
@@ -57,6 +60,7 @@ class SearchByContent():
             if search_content in file.read():
                 self.files_result_dict[str(len(self.files_result_dict) + 1)] = file_path
 
+    # 搜索word文件
     def search_word_file(self, file_path, search_content):
 
         document = Document(file_path)
