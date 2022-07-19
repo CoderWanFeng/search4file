@@ -9,6 +9,6 @@ class TestSearch(unittest.TestCase):
         assert __version__ == '0.1.0'
 
     def test_search(self):
-        search_by_content(search_path=r'D:\workplace\code\test\eval',content='test')
+        search_by_content(search_path=r'./docs',content='test')
 
 
