@@ -34,7 +34,7 @@ class SearchByContent():
             pass
 
     def search_word_file(self, search_path, content):
-        targetDocx = []
+
 
         document = Document(search_path)
         all_paragraphs = document.paragraphs
@@ -42,6 +42,5 @@ class SearchByContent():
             if paragraph.text.find(content) >= 0:
                 targetDocx.append(search_path)
         if targetDocx:
-            print(targetDocx)
-        else:
-            print(f'没有包含内容：{content}的word文档')
+            print('该文件内，包含：【{}】'.format(content) + ' | ' * 2 + search_path)
+
