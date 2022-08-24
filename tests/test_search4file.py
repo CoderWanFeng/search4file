@@ -1,7 +1,7 @@
 import unittest
 
 from search4file import __version__
-from search4file.api.search_by_content import search_by_content
+from search4file.api.search_by_content import search_by_content, find_excel_data
 
 
 class TestSearch(unittest.TestCase):
@@ -10,5 +10,8 @@ class TestSearch(unittest.TestCase):
 
     def test_search(self):
         search_by_content(search_path=r'./docs',content='test')
+    def test_find_excel_data(self):
+        find_excel_data(search_key='刘家站垦殖场',
+                             target_dir=r'D:\workplace\code\gitee\python-office\contributors\bulabean')
 
 
