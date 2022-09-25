@@ -1,6 +1,6 @@
 from search4file.core.SearchByContent import SearchByContent
-from search4file.core.SpecialFunc.SpecialExcel import SpecialExcel
-from search4file.lib.decorator.except_dec import except_dec
+from search4file.core.SpecialFunc import SpecialExcel
+from search4file.lib.utils.except_utils import except_dec
 
 sbc = SearchByContent()
 

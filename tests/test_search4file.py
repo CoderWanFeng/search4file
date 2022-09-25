@@ -9,9 +9,8 @@ class TestSearch(unittest.TestCase):
         assert __version__ == '0.1.0'
 
     def test_search(self):
-        search_by_content(search_path=r'./docs',content='test')
+        search_by_content(search_path=r'./docs', content='test')
+
     def test_find_excel_data(self):
         find_excel_data(search_key='刘家站垦殖场',
-                             target_dir=r'D:\workplace\code\gitee\python-office\contributors\bulabean')
-
-
+                        target_dir=r'D:\workplace\code\gitee\python-office\contributors\bulabean')
