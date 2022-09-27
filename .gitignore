@@ -7,4 +7,6 @@ dist/
 MANIFEST
 venv/
 __pycache__
+script/
+
 
