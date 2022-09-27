@@ -9,7 +9,7 @@ class TestSearch(unittest.TestCase):
         assert __version__ == '0.1.0'
 
     def test_search(self):
-        search_by_content(search_path=r'./docs', search_content='小')
+        search_by_content(search_path=r'./docs', search_content='程序员晚枫')
 
     def test_find_excel_data(self):
         find_excel_data(search_key='刘家站垦殖场',

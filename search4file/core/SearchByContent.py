@@ -5,6 +5,8 @@ import os
 import fitz
 import pandas as pd
 from docx import Document
+from pptx import Presentation
+
 from search4file.core import SpecialExcel
 
 
@@ -65,6 +67,8 @@ class SearchByContent():
                     self.search_excel_file(file_path, search_content)
                 elif file_path.endswith('pdf'):  # 搜索pdf文件
                     self.search_pdf_file(file_path, search_content)
+                elif file_path.endswith('pptx'):  # 搜索pdf文件
+                    self.search_ppt_file(file_path, search_content)
                 else:
                     self.search_txt_file(file_path, search_content)  # 没有任何匹配后缀，搜索纯文本文件
 
@@ -95,20 +99,7 @@ class SearchByContent():
         for paragraph in all_paragraphs:
             if paragraph.text.find(search_content) >= 0:
                 self.word_result_dict[str(len(self.word_result_dict) + 1)] = file_path
-
-    ####################################
-    # 搜索 pdf 文件
-    ####################################
-    def search_pdf_file(self, file_path, search_content):
-        for page in fitz.open(file_path):  # iterate the document pages
-            if page.search_for(search_content):
-                self.pdf_result_dict[str(len(self.pdf_result_dict) + 1)] = file_path
-
-    ####################################
-    # 搜索 ppt 文件
-    ####################################
-    def search_ppt_file(self, file_path, search_content):
-        pass
+                break
 
     ####################################
     # 搜索 excel 文件
@@ -119,3 +110,27 @@ class SearchByContent():
             for row in sheet.itertuples():
                 if search_content in row:
                     self.excel_result_dict[str(len(self.excel_result_dict) + 1)] = file_path
+                    break
+
+    ####################################
+    # 搜索 pdf 文件
+    ####################################
+    def search_pdf_file(self, file_path, search_content):
+        for page in fitz.open(file_path):  # iterate the document pages
+            if page.search_for(search_content):
+                self.pdf_result_dict[str(len(self.pdf_result_dict) + 1)] = file_path
+                break
+
+    ####################################
+    # 搜索 ppt 文件
+    ####################################
+    def search_ppt_file(self, file_path, search_content):
+        ppt = Presentation(file_path)
+        for slide in ppt.slides:  # > .slides 得到一个列表，包含每个列表slide
+            for shape in slide.shapes:  # > slide.shapes 形状
+                if shape.has_text_frame:  # shape.has_text_frame 判断是否有文字
+                    # text_frame = shape.text_frame  # shape.text_frame 获取文字框
+                    for paragraph in shape.text_frame.paragraphs:  # text_frame.paragraphs 获取段落
+                        if search_content in paragraph.text:
+                            self.ppt_result_dict[str(len(self.ppt_result_dict) + 1)] = file_path
+                            break
