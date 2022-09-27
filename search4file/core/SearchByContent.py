@@ -1,6 +1,8 @@
 import glob
 import json
 import os
+
+import fitz
 import pandas as pd
 from docx import Document
 from search4file.core import SpecialExcel
@@ -9,12 +11,14 @@ from search4file.core import SpecialExcel
 class SearchByContent():
     # 初始化输出结果
     def __init__(self):
+        # 查找结果，返回格式，3部分
         self.search_result_dict = {
             'search_path': None,
             'search_content': None,
             # 初始化、找不到时：
             'search_result': {}
         }
+        # 各类文件的查找结果
         self.files_result_dict = {}
         self.word_result_dict = {}
         self.excel_result_dict = {}
@@ -23,20 +27,27 @@ class SearchByContent():
 
     # 格式化返回内容
     def create_return_result(self, search_path, search_content):
+        # 查找路径，转为绝对路径
         search_path = os.path.abspath(search_path)
         # 查询路径在哪里
         self.search_result_dict['search_path'] = search_path
         # 查询内容是什么
         self.search_result_dict['search_content'] = search_content
-        # 返回纯文本
+        # 返回纯文本的结果
         if len(self.files_result_dict) > 0:
             self.search_result_dict['search_result']['files'] = self.files_result_dict
-        # 返回word
+        # 返回word的结果
         if len(self.word_result_dict) > 0:
             self.search_result_dict['search_result']['word'] = self.word_result_dict
-        # 返回excel
+        # 返回excel的结果
         if len(self.excel_result_dict) > 0:
             self.search_result_dict['search_result']['excel'] = self.excel_result_dict
+        # 返回 pdf 的结果
+        if len(self.pdf_result_dict) > 0:
+            self.search_result_dict['search_result']['pdf'] = self.pdf_result_dict
+        # 返回 ppt 的结果
+        if len(self.ppt_result_dict) > 0:
+            self.search_result_dict['search_result']['ppt'] = self.ppt_result_dict
         # 转换为json格式返回
         return json.dumps(self.search_result_dict, indent=4, ensure_ascii=False)
 
@@ -48,12 +59,14 @@ class SearchByContent():
                 _path = glob.os.path.join(file_path, '*')
                 self.search_files(_path, search_content)
             else:
-                if file_path.endswith("docx"):
+                if file_path.endswith("docx"):  # 搜索word文件
                     self.search_word_file(file_path, search_content)
-                elif file_path.endswith("xlsx") or file_path.endswith("xls"):
+                elif file_path.endswith("xlsx") or file_path.endswith("xls"):  # 搜索excel文件
                     self.search_excel_file(file_path, search_content)
+                elif file_path.endswith('pdf'):  # 搜索pdf文件
+                    self.search_pdf_file(file_path, search_content)
                 else:
-                    self.search_txt_file(file_path, search_content)
+                    self.search_txt_file(file_path, search_content)  # 没有任何匹配后缀，搜索纯文本文件
 
         return self.create_return_result(search_path, search_content)
 
@@ -87,7 +100,9 @@ class SearchByContent():
     # 搜索 pdf 文件
     ####################################
     def search_pdf_file(self, file_path, search_content):
-        pass
+        for page in fitz.open(file_path):  # iterate the document pages
+            if page.search_for(search_content):
+                self.pdf_result_dict[str(len(self.pdf_result_dict) + 1)] = file_path
 
     ####################################
     # 搜索 ppt 文件
