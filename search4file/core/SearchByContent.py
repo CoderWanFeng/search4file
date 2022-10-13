@@ -83,11 +83,14 @@ class SearchByContent():
         :param content:
         :return: dict
         """
-        # 若是文件，则将该查询到的文件所在路径插入 final_result 空列表
-        with open(file_path, 'r',
-                  encoding='utf-8') as file:  # 利用 open() 函数读取文件，并通过 try...except... 捕获不可读的文件格式（.zip 格式）
-            if search_content in file.read():
-                self.files_result_dict[str(len(self.files_result_dict) + 1)] = file_path
+        # 利用 open() 函数读取文件，并通过 try...except... 捕获不可读的文件格式（.zip 格式）
+        try:
+            with open(file_path, 'r', encoding='utf-8') as file:
+                if search_content in file.read():
+                    # 若是文件，则将该查询到的文件所在路径插入 final_result 空列表
+                    self.files_result_dict[str(len(self.files_result_dict) + 1)] = file_path
+        except:
+            pass
 
     ####################################
     # 搜索 word 文件
