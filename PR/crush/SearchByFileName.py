@@ -44,11 +44,14 @@ class SearchByFileName(object):
                 self.files_result_dict[count] = file_list[count]
             count += 1
 
-        # 序列化
-        return json.dumps(self.files_result_dict)
+        # 生成迭代器对象
+        yield json.dumps(self.files_result_dict)
 
 
 if __name__ == '__main__':
     test_cwd = os.getcwd()
     se = SearchByFileName()
-    print(se.search_by_file_name(file_path=test_cwd, file_name="e"))
+
+    f_name = se.search_by_file_name(file_path=test_cwd, file_name="ea")
+    for item in f_name:
+        print(item)
