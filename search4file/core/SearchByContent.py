@@ -57,20 +57,36 @@ class SearchByContent():
     def search_files(self, search_path, search_content):
         glob_path = glob.glob(search_path)  # 获取全部路径
         for file_path in glob_path:  # for 循环判断递归查到的内容是文件夹还是文件
+            print(file_path)
             if glob.os.path.isdir(file_path):  # 若是文件夹，继续将该文件夹的路径传给 search() 函数继续递归查找
                 _path = glob.os.path.join(file_path, '*')
                 self.search_files(_path, search_content)
             else:
                 if file_path.endswith("docx"):  # 搜索word文件
-                    self.search_word_file(file_path, search_content)
+                    try:
+                        self.search_word_file(file_path, search_content)
+                    except:
+                        pass
                 elif file_path.endswith("xlsx") or file_path.endswith("xls"):  # 搜索excel文件
-                    self.search_excel_file(file_path, search_content)
+                    try:
+                        self.search_excel_file(file_path, search_content)
+                    except:
+                        pass
                 elif file_path.endswith('pdf'):  # 搜索pdf文件
-                    self.search_pdf_file(file_path, search_content)
+                    try:
+                        self.search_pdf_file(file_path, search_content)
+                    except:
+                        pass
                 elif file_path.endswith('pptx'):  # 搜索pdf文件
-                    self.search_ppt_file(file_path, search_content)
+                    try:
+                        self.search_ppt_file(file_path, search_content)
+                    except:
+                        pass
                 else:
-                    self.search_txt_file(file_path, search_content)  # 没有任何匹配后缀，搜索纯文本文件
+                    try:
+                        self.search_txt_file(file_path, search_content)  # 没有任何匹配后缀，搜索纯文本文件
+                    except:
+                        pass
 
         return self.create_return_result(search_path, search_content)
 
