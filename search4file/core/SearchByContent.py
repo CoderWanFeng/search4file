@@ -1,3 +1,4 @@
+import asyncio
 import glob
 import json
 import os
@@ -6,8 +7,12 @@ import fitz
 import pandas as pd
 from docx import Document
 from pptx import Presentation
+import imghdr
+
+from tqdm import tqdm
 
 from search4file.core import SpecialExcel
+from search4file.lib.unhandle_file_type import unhandle_file_types
 
 
 class SearchByContent():
@@ -21,11 +26,12 @@ class SearchByContent():
             'search_result': {}
         }
         # 各类文件的查找结果
-        self.files_result_dict = {}
         self.word_result_dict = {}
         self.excel_result_dict = {}
         self.ppt_result_dict = {}
         self.pdf_result_dict = {}
+        self.files_result_dict = {}
+        self.search_tasks = []
 
     # 格式化返回内容
     def create_return_result(self, search_path, search_content):
@@ -54,46 +60,35 @@ class SearchByContent():
         return json.dumps(self.search_result_dict, indent=4, ensure_ascii=False)
 
     # 搜索内容的逻辑
-    def search_files(self, search_path, search_content):
-        glob_path = glob.glob(search_path)  # 获取全部路径
-        for file_path in glob_path:  # for 循环判断递归查到的内容是文件夹还是文件
-            print(file_path)
-            if glob.os.path.isdir(file_path):  # 若是文件夹，继续将该文件夹的路径传给 search() 函数继续递归查找
-                _path = glob.os.path.join(file_path, '*')
-                self.search_files(_path, search_content)
-            else:
-                if file_path.endswith("docx"):  # 搜索word文件
-                    try:
-                        self.search_word_file(file_path, search_content)
-                    except:
+    async def search_files(self, search_path, search_content):
+        try:
+            for root, dirs, files in tqdm(os.walk(search_path), unit='file', desc='搜索进度'):
+                for file_path in files:
+                    file_path = os.path.join(root, file_path)
+                    # print(file_path)
+                    if file_path.endswith("docx"):  # 搜索word文件
+                        self.search_tasks.append(self.search_word_file(file_path, search_content))
+                    elif file_path.endswith(("xlsx", "xls")):  # 搜索excel文件
+                        self.search_tasks.append(self.search_excel_file(file_path, search_content))
+                    elif file_path.endswith('pdf'):  # 搜索pdf文件
+                        self.search_tasks.append(self.search_pdf_file(file_path, search_content))
+                    elif file_path.endswith('pptx'):  # 搜索pptx文件
+                        self.search_tasks.append(self.search_ppt_file(file_path, search_content))
+                    elif imghdr.what(file_path):  # 图片类文件的搜索，待开发
                         pass
-                elif file_path.endswith("xlsx") or file_path.endswith("xls"):  # 搜索excel文件
-                    try:
-                        self.search_excel_file(file_path, search_content)
-                    except:
+                    elif file_path.endswith(unhandle_file_types):  # 待开发类文件的搜索，暂时略过
                         pass
-                elif file_path.endswith('pdf'):  # 搜索pdf文件
-                    try:
-                        self.search_pdf_file(file_path, search_content)
-                    except:
-                        pass
-                elif file_path.endswith('pptx'):  # 搜索pdf文件
-                    try:
-                        self.search_ppt_file(file_path, search_content)
-                    except:
-                        pass
-                else:
-                    try:
-                        self.search_txt_file(file_path, search_content)  # 没有任何匹配后缀，搜索纯文本文件
-                    except:
-                        pass
-
+                    else:
+                        self.search_tasks.append(self.search_txt_file(file_path, search_content))  # 没有任何匹配后缀，搜索纯文本文件
+            await asyncio.gather(*self.search_tasks)
+        except:
+            pass
         return self.create_return_result(search_path, search_content)
 
     ####################################
     # 搜索 纯文本 文件
     ####################################
-    def search_txt_file(self, file_path, search_content) -> None:
+    async def search_txt_file(self, file_path, search_content) -> None:
         """
         :param search_path:
         :param content:
@@ -101,17 +96,19 @@ class SearchByContent():
         """
         # 利用 open() 函数读取文件，并通过 try...except... 捕获不可读的文件格式（.zip 格式）
         try:
-            with open(file_path, 'r', encoding='utf-8') as file:
-                if search_content in file.read():
-                    # 若是文件，则将该查询到的文件所在路径插入 final_result 空列表
-                    self.files_result_dict[str(len(self.files_result_dict) + 1)] = file_path
+            with open(file_path, 'r', encoding='utf-8') as pure_file:
+                for line in pure_file:
+                    if search_content in line:
+                        # 若是文件，则将该查询到的文件所在路径插入 final_result 空列表
+                        self.files_result_dict[str(len(self.files_result_dict) + 1)] = file_path
+                        break
         except:
             pass
 
     ####################################
     # 搜索 word 文件
     ####################################
-    def search_word_file(self, file_path, search_content):
+    async def search_word_file(self, file_path, search_content):
 
         document = Document(file_path)
         all_paragraphs = document.paragraphs
@@ -123,7 +120,7 @@ class SearchByContent():
     ####################################
     # 搜索 excel 文件
     ####################################
-    def search_excel_file(self, file_path, search_content):
+    async def search_excel_file(self, file_path, search_content):
         df = pd.read_excel(file_path, sheet_name=None, header=None)
         for sheet in df.values():
             for row in sheet.itertuples():
@@ -134,7 +131,7 @@ class SearchByContent():
     ####################################
     # 搜索 pdf 文件
     ####################################
-    def search_pdf_file(self, file_path, search_content):
+    async def search_pdf_file(self, file_path, search_content):
         for page in fitz.open(file_path):  # iterate the document pages
             if page.search_for(search_content):
                 self.pdf_result_dict[str(len(self.pdf_result_dict) + 1)] = file_path
@@ -143,7 +140,7 @@ class SearchByContent():
     ####################################
     # 搜索 ppt 文件
     ####################################
-    def search_ppt_file(self, file_path, search_content):
+    async def search_ppt_file(self, file_path, search_content):
         ppt = Presentation(file_path)
         for slide in ppt.slides:  # > .slides 得到一个列表，包含每个列表slide
             for shape in slide.shapes:  # > slide.shapes 形状
