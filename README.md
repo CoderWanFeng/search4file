@@ -38,7 +38,7 @@ pip install search4file
 
 你好，我是Python程序员晚枫。这个库实现的功能：根据文件内容，搜索文件位置。
 > 已经集成到python-office里了👉[视频教程](https://www.bilibili.com/video/BV13P411n77G)
-开发者微信：[CoderWanFeng](https://mp.weixin.qq.com/s/4Br2YXCinQEHseJwdtGAsQ)
+开发者微信：[CoderWanFeng](https://mp.weixin.qq.com/s/j-t09tlOLZhC4Rhc77SmYw)
 # 功能
 - 通过内容查找文件
 - 通过名称查找图片
