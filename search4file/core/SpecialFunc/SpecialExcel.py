@@ -126,4 +126,5 @@ class SpecialExcel():
 
     def find_excel_data(self, search_key, target_dir):
         for data in self.find_excel_data_main(search_key, target_dir):
+            a = data
             print(data)

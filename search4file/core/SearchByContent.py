@@ -1,17 +1,17 @@
 import asyncio
-import glob
 import json
 import os
+from pathlib import Path
 
-import fitz
+import pymupdf
 import pandas as pd
 from docx import Document
+from poprogress import simple_progress
 from pptx import Presentation
 import imghdr
+from win32com.client import Dispatch, DispatchEx
 
-from tqdm import tqdm
-
-from search4file.core import SpecialExcel
+from search4file.lib.CONST import PROBLEM_LIST
 from search4file.lib.unhandle_file_type import unhandle_file_types
 
 
@@ -23,7 +23,8 @@ class SearchByContent():
             'search_path': None,
             'search_content': None,
             # 初始化、找不到时：
-            'search_result': {}
+            'search_result': {},
+            'search_problem': PROBLEM_LIST
         }
         # 各类文件的查找结果
         self.word_result_dict = {}
@@ -62,11 +63,13 @@ class SearchByContent():
     # 搜索内容的逻辑
     async def search_files(self, search_path, search_content):
         try:
-            for root, dirs, files in tqdm(os.walk(search_path), unit='file', desc='搜索进度'):
-                for file_path in files:
+            # for root, dirs, files in tqdm(os.walk(search_path), unit='file', desc='搜索进度'):
+            for root, dirs, files in os.walk(search_path):
+                # files_list = get_files(Path(search_path).absolute())
+                for file_path in simple_progress(files, desc='搜索进度'):
                     file_path = os.path.join(root, file_path)
                     # print(file_path)
-                    if file_path.endswith("docx"):  # 搜索word文件
+                    if file_path.endswith(("docx", "doc")):  # 搜索word文件
                         self.search_tasks.append(self.search_word_file(file_path, search_content))
                     elif file_path.endswith(("xlsx", "xls")):  # 搜索excel文件
                         self.search_tasks.append(self.search_excel_file(file_path, search_content))
@@ -109,13 +112,24 @@ class SearchByContent():
     # 搜索 word 文件
     ####################################
     async def search_word_file(self, file_path, search_content):
-
-        document = Document(file_path)
-        all_paragraphs = document.paragraphs
-        for paragraph in all_paragraphs:
-            if paragraph.text.find(search_content) >= 0:
-                self.word_result_dict[str(len(self.word_result_dict) + 1)] = file_path
-                break
+        if Path(file_path).suffix == '.docx':
+            document = Document(file_path)
+            all_paragraphs = document.paragraphs
+            for paragraph in all_paragraphs:
+                if paragraph.text.find(search_content) >= 0:
+                    self.word_result_dict[str(len(self.word_result_dict) + 1)] = file_path
+                    break
+        else:
+            pass
+            # doc_app = Dispatch('Word.Application')  # 打开word应用程序
+            # # word = DispatchEx('Word.Application') # 启动独立的进程
+            # doc_app.Visible = 0  # 后台运行,不显示
+            # doc_app.DisplayAlerts = 0  # 不警告
+            # doc_file = doc_app.Documents.Open(FileName=file_path, Encoding='gbk')
+            # for para in doc_file.paragraphs:
+            #     if para.text.find(search_content) >= 0:
+            #         self.word_result_dict[str(len(self.word_result_dict) + 1)] = file_path
+            #         break
 
     ####################################
     # 搜索 excel 文件
@@ -132,7 +146,7 @@ class SearchByContent():
     # 搜索 pdf 文件
     ####################################
     async def search_pdf_file(self, file_path, search_content):
-        for page in fitz.open(file_path):  # iterate the document pages
+        for page in pymupdf.open(file_path):  # iterate the document pages
             if page.search_for(search_content):
                 self.pdf_result_dict[str(len(self.pdf_result_dict) + 1)] = file_path
                 break

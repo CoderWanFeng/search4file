@@ -1,5 +1,3 @@
-
-
 <p align="center" id='支付宝'>
     <a target="_blank" href='https://mp.weixin.qq.com/s/UsFs6ooDspyhhKMleKTVpw'>
     <img src="https://website-python-1300615378.cos.ap-nanjing.myqcloud.com/ads%2F%E8%81%94%E7%9B%9F%E5%B9%BF%E5%91%8A%2Falipay.jpg" width="100%"/>
@@ -18,28 +16,34 @@
 
 
 <p align="center" name="图标-github">
-    <a target="_blank" href='https://github.com/CoderWanFeng/python-office'>
-    <img src="https://img.shields.io/github/stars/CoderWanFeng/python-office.svg?style=social" alt="github star"/>
+
+ <a target="_blank" href='https://github.com/CoderWanFeng/search4file'>
+<img src="https://static.pepy.tech/badge/search4file" alt="PyPI Downloads">
+</a>
+<a target="_blank" href='https://github.com/CoderWanFeng/search4file'>
+    <img src="https://img.shields.io/github/stars/CoderWanFeng/search4file.svg?style=social" alt="github star"/>
     </a>
-    	<a target="_blank" href='https://gitee.com/CoderWanFeng/python-office'>
-		<img src='https://gitee.com/CoderWanFeng//python-office/badge/star.svg?theme=dark' alt='gitee star'/>
-	</a>
-  	<a href="https://mp.weixin.qq.com/s/Jf_EVdKlVnHhK68fW5OA6A">
-	<img src="https://img.shields.io/badge/QQ-1090738447-orange"/>
+
+
+ <a href="https://mp.weixin.qq.com/s/yaSmFKO3RrBpyanW3nvRAQ">
+	<img src="https://img.shields.io/badge/QQ-163434413-orange"/>
   </a>
-    	<a href="https://mp.weixin.qq.com/s/wx-JkgOUoJhb-7ZESxl93w">
-	<img src="https://img.shields.io/badge/%E5%BE%AE%E4%BF%A1-%E4%BA%A4%E6%B5%81%E7%BE%A4-brightgreen"/>
-  </a>
+    	<a href="https://www.python4office.cn/wechat-group/">
+  <img src="https://img.shields.io/badge/加入-AI交流群-brightgreen" alt="AI交流群">
+</a>
+
 </p>
 
-
 # search4file
+
 pip install search4file
 
 你好，我是Python程序员晚枫。这个库实现的功能：根据文件内容，搜索文件位置。
 > 已经集成到python-office里了👉[视频教程](https://www.bilibili.com/video/BV13P411n77G)
-开发者微信：[CoderWanFeng](https://mp.weixin.qq.com/s/j-t09tlOLZhC4Rhc77SmYw)
+> 开发者微信：[python-office](https://www.python4office.cn/wechat-qrcode/)
+
 # 功能
+
 - 通过内容查找文件
 - 通过名称查找图片
 - ocr识别图片内容
@@ -58,13 +62,15 @@ pip install search4file
 
 ```python
     def search_pdf_file(self, file_path, search_content):
-        pass
+    pass
 
-    def search_ppt_file(self, file_path, search_content):
-        pass
 
-    def search_excel_file(self, file_path, search_content):
-        pass
+def search_ppt_file(self, file_path, search_content):
+    pass
+
+
+def search_excel_file(self, file_path, search_content):
+    pass
 ```
 
 ### 1个按照文件名查找的接口，需要实现
@@ -79,6 +85,7 @@ class SearchByName():
     def search_files(self, search_path, search_content):
         pass
 ```
+
 ## 2、优化逻辑
 
 优化内容，目前主要有：
@@ -93,10 +100,18 @@ class SearchByName():
     - 例如：用户输入：大山，查找出某个视频里，所有和大山有关的画面、字幕
 
 ## 3、交流群
-![CoderWanFeng](https://python-office-1300615378.cos.ap-chongqing.myqcloud.com/python-office-qr.jpg)
 
-<p align="center" id='腾讯云-banner'>
-    <a target="_blank" href='https://url.cn/Z4lzPLaF'>
-    <img src="https://website-python-1300615378.cos.ap-nanjing.myqcloud.com/ads%2F1040x100-tencent.jpg" width="100%"/>
+<p align="center" id='开源交流群-banner'>
+<a target="_blank" href='https://cos.python-office.com/group%2Ffree-group.jpg'>
+<img src="https://cos.python-office.com/group/python-office-qr.jpg" width="100%"/>
+</a> 
+</p>
+
+
+<p align="center" id='进群-banner-AI'>
+    <a target="_blank" href='https://www.python4office.cn/wechat-group/'>
+    <img src="https://raw.atomgit.com/user-images/assets/5027920/87fc1ca4-1a6c-47b8-b234-3e323a1aa827/aiq.jpg" width="100%"/>
     </a>   
 </p>
+
+
